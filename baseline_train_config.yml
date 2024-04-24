@@ -1,0 +1,54 @@
+model:
+  encoder:
+    node_feat_dim: 128
+    pair_feat_dim: 64
+    num_layers: 3
+  max_num_atoms: 15
+  num_classes: 1
+
+data:
+  strict: True
+  finetune: False
+  split_seed: 2024
+  csv_path: ./benchmark.csv
+  cache_dir: ./benchmark_cache
+  logdir: ./log_dir
+  transform:
+    train:
+    - type: select_atom
+      resolution: full
+    - type: add_atom_noise
+    - type: add_chi_angle_noise
+    - type: selected_region_fixed_size_patch
+      select_attr: itf_flag
+      patch_size: 128
+    val:
+    - type: select_atom
+      resolution: full
+    - type: selected_region_fixed_size_patch
+      select_attr: itf_flag
+      patch_size: 128
+  lable_type:
+    - dG
+
+train:
+  loss_weights:
+    regression: 1.0
+    regular: 1.0
+  num_cvfolds: 5
+  max_iters: 100_000
+  val_freq: 1000
+  batch_size: 32
+  seed: 2024
+  max_grad_norm: 100.0
+  optimizer:
+    type: adam
+    lr: 5.e-4
+    weight_decay: 0
+    beta1: 0.9
+    beta2: 0.999
+  scheduler:
+    type: plateau
+    factor: 0.8
+    patience: 3
+    min_lr: 1.e-6
