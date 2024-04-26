@@ -8,7 +8,6 @@ model:
 
 data:
   strict: True
-  finetune: False
   split_seed: 2024
   csv_path: ./benchmark.csv
   cache_dir: ./benchmark_cache

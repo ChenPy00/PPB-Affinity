@@ -13,7 +13,7 @@ from BaselineModel.utils.protein.constants import BBHeavyAtom
 class DG_Network(nn.Module):
 
     def __init__(self, cfg):
-        super().__init__()
+        super().__init__()strict
         self.cfg = cfg
 
         # Pretrain

@@ -5,11 +5,11 @@ import pandas as pd
 import os
 
 path_dict = {
-    'SKEMPIv2.0': '../processed_data/PDB/SKEMPIv2.0/',
-    'PDBbindCN': '../processed_data/PDB/PDBbindCN/',
-    'SAbDab': '../processed_data/PDB/SAbDab/',
-    'ATLAS': '../processed_data/PDB/ATLAS/',
-    'SABv2': '../processed_data/PDB/SABv2/',
+    'SKEMPIv2.0': './PDB/SKEMPIv2.0/',
+    'PDBbindCN': './PDB/PDBbindCN/',
+    'SAbDab': './PDB/SAbDab/',
+    'ATLAS': './PDB/ATLAS/',
+    'Affinity Benchmark': './PDB/Affinity Benchmark/',
 }
 
 case_type = {
@@ -17,7 +17,7 @@ case_type = {
     'PDBbindCN': 'lower.ent.pdb',
     'SAbDab': 'lower.pdb',
     'ATLAS': 'upper.pdb',
-    'SABv2': 'upper.pdb',
+    'Affinity Benchmark': 'upper.pdb',
 }
 
 
@@ -45,7 +45,7 @@ def mutstr_transform(mutstr):
     return mutstr
 
 
-affinity_data = pd.read_excel('../processed_data/PPB-Affinity.xlsx',
+affinity_data = pd.read_excel('./PPB-Affinity.xlsx',
                               usecols=['PDB', 'Source Data Set', 'Mutations', 'Ligand Chains', 'Receptor Chains',
                                        'dG(kcal/mol)', 'Subgroup'],
                               dtype={"PDB": str})
