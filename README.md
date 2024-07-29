@@ -16,14 +16,14 @@ Files of the download dataset are orginized as follows:
 - samples_deleted.zip
 - PPB-Affinity-AF.zip
 - PDB/
-  - Affinity Benchmark/
+  - Affinity Benchmark v5.5/
     - file1.pdb
     - ...
     - file2.pdb
   - ATLAS/
-  - PDBbindCN/
+  - PDBbind v2020/
   - SAbDab/
-  - SKEMPIv2.0/
+  - SKEMPI v2.0/
  
 
 ## Baseline model
@@ -53,6 +53,8 @@ Files of the download dataset are orginized as follows:
 
 2. **Train the baseline model**
 
+Perform five-fold cross-validation on the baseline model using the PPB-Affinity dataset, with data split based on PDB codes.
+
    ```
    python train.py \
    	--config ./baseline_train_config.yml \
@@ -61,4 +63,10 @@ Files of the download dataset are orginized as follows:
    ```
    
    After running the script, a folder "log_dir" will be generated, there are the checkpoint, log file and predict file(K-fold)
+   
+3. **Run draw.ipynb to draw scatter plots of cross validation.**
 <!-- #endregion -->
+
+```python
+
+```
