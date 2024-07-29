@@ -53,13 +53,10 @@ affinity_data.rename(columns={'Source Data Set': 'source', 'dG(kcal/mol)': 'dG',
                               'Mutations': 'mutstr', 'PDB': 'pdb',
                               'Ligand Chains': 'ligand', 'Receptor Chains': 'receptor'}, inplace=True)
 
-print(affinity_data.shape)
+
 affinity_data = affinity_data[~(affinity_data.ligand.str.len() + affinity_data.receptor.str.len() > 26)]
 affinity_data.reset_index(drop=True, inplace=True)
 affinity_data['pdb_path'] = affinity_data[['pdb', 'source']].apply(create_pdb_path, axis=1)
-print(affinity_data.shape)
-TCR_list = set(affinity_data[affinity_data.Subgroup == 'TCR-pMHC']['pdb'].tolist())
-AB_list = set(affinity_data[affinity_data.Subgroup == 'Antibody-Antigen']['pdb'].tolist())
 
 affinity_data['mutstr'] = affinity_data['mutstr'].apply(mutstr_transform)
 

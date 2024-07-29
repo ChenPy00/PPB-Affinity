@@ -13,10 +13,9 @@ from BaselineModel.utils.protein.constants import BBHeavyAtom
 class DG_Network(nn.Module):
 
     def __init__(self, cfg):
-        super().__init__()strict
+        super().__init__()
         self.cfg = cfg
 
-        # Pretrain
         res_dim = cfg.encoder.node_feat_dim
 
         # Encoding
