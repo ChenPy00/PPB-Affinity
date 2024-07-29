@@ -1,3 +1,4 @@
+<!-- #region -->
 # PPB-Affinity
 
 PPB-Affinity: Protein-Protein Binding Affinity dataset for AI-based protein drug discovery
@@ -6,20 +7,24 @@ Prediction of protein-protein binding (PPB) affinity plays an important role in 
 
 ## Download Data
 
-You can download dataset from zenodo https://doi.org/10.5281/zenodo.11070824
+You can download dataset from zenodo https://doi.org/10.5281/zenodo.13067409
 
 ### Benchmark File Tree
 
 Files of the download dataset are orginized as follows:
 - PPB-Affinity.xlsx
+- samples_deleted.zip
+- PPB-Affinity-AF.zip
 - PDB/
   - Affinity Benchmark/
     - file1.pdb
+    - ...
     - file2.pdb
   - ATLAS/
   - PDBbindCN/
   - SAbDab/
   - SKEMPIv2.0/
+ 
 
 ## Baseline model
 
@@ -56,3 +61,4 @@ Files of the download dataset are orginized as follows:
    ```
    
    After running the script, a folder "log_dir" will be generated, there are the checkpoint, log file and predict file(K-fold)
+<!-- #endregion -->
