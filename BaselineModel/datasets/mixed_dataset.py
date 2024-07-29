@@ -30,7 +30,7 @@ def insert_eos(index_tensor, original_tensor, src:torch.Tensor=torch.tensor([22]
     return torch.cat(result)
 
 
-def load_data_entries(csv_path, block_list={'1KBH'}):
+def load_data_entries(csv_path, blocklist={'1KBH'}):
     df = pd.read_csv(csv_path)
     df['mutstr'] = df['mutstr'].apply(lambda x: x.replace('_', '') if type(x)==str else x)
     try:
@@ -57,7 +57,7 @@ def load_data_entries(csv_path, block_list={'1KBH'}):
         }
 
     for i, r in df.iterrows():
-        if r['pdb'].upper() in block_list:
+        if r['pdb'].upper() in blocklist:
             continue
         if type(r['mutstr']) == float:
             pass
@@ -108,6 +108,7 @@ def load_data_entries(csv_path, block_list={'1KBH'}):
     return entries
 
 
+# +
 # 使用ESM分别提取ligand/receptor的特征
 class MixedDataset(Dataset):
 
@@ -119,21 +120,17 @@ class MixedDataset(Dataset):
             num_cvfolds=3,
             split='train',
             split_seed=2024,
-            blocklist=frozenset({'1KBH', '4r8i', '4R8I', '1FYT','3OGO', '5NT1'}),
-            only_train_pdb=None,
+            blocklist=frozenset({'1KBH', '4R8I', '1FYT'}),
             transform=None,
             reset=False,
             strict=True,
     ):
         super().__init__()
-        if only_train_pdb is None:
-            only_train_pdb = []
         self.csv_path = csv_path
         self.cache_dir = cache_dir
         os.makedirs(cache_dir, exist_ok=True)
         self.transform = transform
         self.blocklist = blocklist
-        self.only_train_pdb = only_train_pdb
         self.cvfold_index = cvfold_index
         self.num_cvfolds = num_cvfolds
         assert split in ('train', 'val')
@@ -156,7 +153,8 @@ class MixedDataset(Dataset):
         else:
             with open(self.entries_cache, 'rb') as f:
                 self.entries_full = pickle.load(f)
-
+            self.entries_full = [e for e in self.entries_full if e['complex'] not in self.blocklist]
+        
         # 严格划分数据
         if self.strict:
             complex_to_entries = {}
@@ -168,9 +166,6 @@ class MixedDataset(Dataset):
             complex_list = sorted(complex_to_entries.keys())
             random.Random(self.split_seed).shuffle(complex_list)
 
-            # pop only-train-pdb
-            complex_list = [complex for complex in complex_list if complex not in self.only_train_pdb]
-            random.Random(self.split_seed).shuffle(complex_list)
 
             split_size = math.ceil(len(complex_list) / self.num_cvfolds)
             complex_splits = [
@@ -181,10 +176,6 @@ class MixedDataset(Dataset):
             val_split = complex_splits.pop(self.cvfold_index)
             train_split = sum(complex_splits, start=[])
 
-            # set only-train-pdb to train_split
-            if len(self.only_train_pdb) != 0:
-                train_split += self.only_train_pdb
-                random.Random(self.split_seed).shuffle(train_split)
 
             if self.split == 'val':
                 complexes_this = val_split
@@ -306,7 +297,7 @@ class MixedDataset(Dataset):
         idx_itf = torch.cat([idx_ligand_itf, idx_receptor_itf])
         data['itf_flag'] = torch.full_like(data['aa'], False, dtype=torch.bool)
         data['itf_flag'][idx_itf] = True
-            
+
         if self.transform is not None:
             try:
                 data_tf = self.transform(data)
@@ -318,3 +309,46 @@ class MixedDataset(Dataset):
                 pdb.set_trace()
         
         return data
+    
+#         if self.transform is not None:
+#             try:
+#                 data_tf = self.transform(data)
+#                 data = data_tf
+#                 data['block']=False
+#                 return data
+#             except IndexError:
+#                 print(data['pdbcode'])
+#                 print(data['itf_flag'].sum())
+#                 data['block']=True
+#                 return data
+# -
+
+if __name__=='__main__':
+    import tqdm
+    import argparse
+    import sys
+    sys.path.append('../../')
+    from BaselineModel.utils.misc import load_config
+    from BaselineModel.utils.transforms import get_transform
+    
+    config, config_name = load_config(config_path='../../baseline_train_config.yml')
+    dataset = MixedDataset(
+        csv_path=config.data.csv_path,
+        cache_dir=config.data.cache_dir,
+        num_cvfolds=5,
+        cvfold_index=1,
+        split='val', 
+        strict=config.data.strict,
+        split_seed=config.data.split_seed,
+        blocklist=config.data.blocklist,
+        transform=get_transform(config.data.transform.train)
+    )
+    blocklist = []
+    for i in tqdm.tqdm(range(dataset.__len__())):
+        data = dataset.__getitem__(i)
+        if data['block']:
+            blocklist.append(data['pdbcode'])
+        assert ~np.isnan(data['labels']).any(), data['pdbcode']
+    print(blocklist)
+
+

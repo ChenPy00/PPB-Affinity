@@ -10,7 +10,7 @@ from tqdm.auto import tqdm
 
 
 from BaselineModel.utils.misc import inf_iterator, BlackHole
-from BaselineModel.utils.data import PaddingCollate_struc, PaddingCollate_seq# PaddingCollate
+from BaselineModel.utils.data import PaddingCollate_struc
 from BaselineModel.utils.transforms import get_transform
 from BaselineModel.datasets import MixedDataset
 import itertools
@@ -46,6 +46,7 @@ class MixedDatasetManager(object):
         self.val_dataset=[]
         self.logger = logger
         self.num_workers = num_workers
+        
         for fold in range(num_cvfolds):
             train_iterator, val_loader, train_cplx, val_cplx, train_dataset, val_dataset = self.init_loaders(fold)
             self.train_split.append(train_cplx)
@@ -65,8 +66,9 @@ class MixedDatasetManager(object):
             num_cvfolds=self.num_cvfolds,
             cvfold_index=fold,
             strict=config.data.strict,
-            finetune=config.data.finetune,
-            split_seed=config.data.split_seed
+            split_seed=config.data.split_seed,
+            blocklist=config.data.blocklist,
+            reset=config.data.reset,
             # transform = get_transform(config.data.transform)
         )
         train_dataset = mixed_dataset_(split='train', transform=get_transform(config.data.transform.train))
@@ -80,10 +82,8 @@ class MixedDatasetManager(object):
             assert len(leakage) == 0, f'data leakage {leakage}'
         else:
             pass
-        if config.data.finetune:
-            PaddingCollate=PaddingCollate_seq()
-        else:
-            PaddingCollate=PaddingCollate_struc()
+        
+        PaddingCollate=PaddingCollate_struc()
             
         train_loader = DataLoader(
             train_dataset,

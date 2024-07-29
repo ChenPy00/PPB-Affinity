@@ -1,23 +1,24 @@
 #!/usr/bin/env python
 # coding: utf-8
-
 import pandas as pd
 import os
 
+data_dir = '../PPB-Affinity-DataPrepWorkflow/processed_data'
 path_dict = {
-    'SKEMPIv2.0': './PDB/SKEMPIv2.0/',
-    'PDBbindCN': './PDB/PDBbindCN/',
+    'SKEMPI v2.0': './PDB/SKEMPI v2.0/',
+    'PDBbind v2020': './PDB/PDBbind v2020/',
     'SAbDab': './PDB/SAbDab/',
     'ATLAS': './PDB/ATLAS/',
-    'Affinity Benchmark': './PDB/Affinity Benchmark/',
+    'Affinity Benchmark v5.5': './PDB/Affinity Benchmark v5.5/',
 }
+for k,v in path_dict.items(): path_dict[k] = os.path.join(data_dir,v)
 
 case_type = {
-    'SKEMPIv2.0': 'upper.pdb',
-    'PDBbindCN': 'lower.ent.pdb',
+    'SKEMPI v2.0': 'upper.pdb',
+    'PDBbind v2020': 'lower.ent.pdb',
     'SAbDab': 'lower.pdb',
     'ATLAS': 'upper.pdb',
-    'Affinity Benchmark': 'upper.pdb',
+    'Affinity Benchmark v5.5': 'upper.pdb',
 }
 
 
@@ -30,7 +31,7 @@ def create_pdb_path(inputs):
     file_name = eval(f'pdb_code.{case}()') + suffix
     pdb_path = os.path.join(path_dict[source], file_name)
     if os.path.exists(pdb_path):
-        return os.path.realpath(pdb_path)
+        return pdb_path# os.path.realpath(pdb_path)
     else:
         import pdb
         pdb.set_trace()
@@ -45,7 +46,7 @@ def mutstr_transform(mutstr):
     return mutstr
 
 
-affinity_data = pd.read_excel('./PPB-Affinity.xlsx',
+affinity_data = pd.read_excel('../PPB-Affinity-DataPrepWorkflow/processed_data/PPB-Affinity.xlsx',
                               usecols=['PDB', 'Source Data Set', 'Mutations', 'Ligand Chains', 'Receptor Chains',
                                        'dG(kcal/mol)', 'Subgroup'],
                               dtype={"PDB": str})

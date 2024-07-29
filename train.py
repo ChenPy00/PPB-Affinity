@@ -103,7 +103,7 @@ if __name__ == '__main__':
         loss_dict, _ = model(batch)
         loss = sum_weighted_losses(loss_dict, config.train.loss_weights)
         time_forward_end = current_milli_time()
-
+        
         # Backward
         loss.backward()
         orig_grad_norm = clip_grad_norm_(model.parameters(), config.train.max_grad_norm)
@@ -112,15 +112,16 @@ if __name__ == '__main__':
         time_backward_end = current_milli_time()
 
         # Logging
-        scalar_dict = {}
-        scalar_dict.update({
-            'fold': fold,
-            'grad': orig_grad_norm,
-            'lr': optimizer.param_groups[0]['lr'],
-            'time_forward': (time_forward_end - time_start) / 1000,
-            'time_backward': (time_backward_end - time_forward_end) / 1000,
-        })
-        log_losses(loss, loss_dict, scalar_dict, it=it, tag='train', logger=logger, writer=writer)
+        if it%10==0:
+            scalar_dict = {}
+            scalar_dict.update({
+                'fold': fold,
+                'grad': orig_grad_norm,
+                'lr': optimizer.param_groups[0]['lr'],
+                'time_forward': (time_forward_end - time_start) / 1000,
+                'time_backward': (time_backward_end - time_forward_end) / 1000,
+            })
+            log_losses(loss, loss_dict, scalar_dict, it=it, tag='train', logger=logger, writer=writer)
 
     def validate(it):
         scalar_accum = ScalarMetricAccumulator()

@@ -69,7 +69,7 @@ class DG_Network(nn.Module):
             res_nb=batch['res_nb'], chain_nb=batch['chain_nb'],
             pos_atoms=batch['pos_atoms'], mask_atoms=batch['mask_atoms'],
         )
-                        
+        
         x = self.attn_encoder(
             pos_atoms=batch['pos_atoms'],
             res_feat=x, pair_feat=z,
@@ -83,15 +83,17 @@ class DG_Network(nn.Module):
         h = self.encode(batch)
         H = h.max(dim=1)[0]
 
-        preds = self.predictor(H).squeeze(-1)
+        preds = self.predictor(H)
         labels_mask = batch['labels_mask']
-        
+        assert preds.size(1)==1 and batch['labels'].size(1)==1
         if preds.size()==batch['labels'].size():
             regression_loss = F.mse_loss(preds, batch['labels'], reduction='none')
             regression_loss = (regression_loss * labels_mask).sum() / labels_mask.sum()
         else:
             regression_loss = F.mse_loss(preds.unsqueeze(-1), batch['labels'], reduction='none')
             regression_loss = (regression_loss * labels_mask).sum() / labels_mask.sum()
+        if regression_loss.isnan().any():
+            import pdb;pdb.set_trace()
 
         loss_dict = {
             'regression': regression_loss

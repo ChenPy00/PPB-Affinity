@@ -8,6 +8,8 @@ model:
 
 data:
   strict: True
+  finetune: False
+  reset: False
   split_seed: 2024
   csv_path: ./benchmark.csv
   cache_dir: ./benchmark_cache
@@ -29,6 +31,9 @@ data:
       patch_size: 128
   lable_type:
     - dG
+  blocklist:
+    - 4R8I
+    - 1FYT
 
 train:
   loss_weights:
@@ -37,11 +42,11 @@ train:
   num_cvfolds: 5
   max_iters: 100_000
   val_freq: 1000
-  batch_size: 32
+  batch_size: 16
   seed: 2024
   max_grad_norm: 100.0
   optimizer:
-    type: adam
+    type: adamw
     lr: 5.e-4
     weight_decay: 0
     beta1: 0.9
@@ -49,5 +54,5 @@ train:
   scheduler:
     type: plateau
     factor: 0.8
-    patience: 3
+    patience: 2
     min_lr: 1.e-6
