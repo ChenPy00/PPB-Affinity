@@ -1,0 +1,3 @@
+benchmark_cache/*
+log_dir/*
+*.zip
