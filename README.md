@@ -53,7 +53,7 @@ Files of the download dataset are orginized as follows:
 
 2. **Train the baseline model**
 
-Perform five-fold cross-validation on the baseline model using the PPB-Affinity dataset, with data split based on PDB codes.
+  Perform five-fold cross-validation on the baseline model using the PPB-Affinity dataset, with data split based on PDB codes.
 
    ```
    python train.py \
@@ -65,8 +65,8 @@ Perform five-fold cross-validation on the baseline model using the PPB-Affinity 
    After running the script, a folder "log_dir" will be generated, there are the checkpoint, log file and predict file(K-fold)
    
 3. **Run draw.ipynb to draw scatter plots of cross validation.**
+
+## How do we preprocess the source data-set to get PPB-Affinity？
+
+We provide a code how to preprocess the source dataset to obtain PPB-Affinity. Please visit https://github.com/Huatsing-Lau/PPB-Affinity-DataPrepWorkflow
 <!-- #endregion -->
-
-```python
-
-```
