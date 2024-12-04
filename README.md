@@ -1,7 +1,7 @@
 <!-- #region -->
 # PPB-Affinity
 
-PPB-Affinity: Protein-Protein Binding Affinity dataset for AI-based protein drug discovery
+[PPB-Affinity: Protein-Protein Binding Affinity dataset for AI-based protein drug discovery](https://www.nature.com/articles/s41597-024-03997-4)
 
 Prediction of protein-protein binding (PPB) affinity plays an important role in large-molecular drug discovery. Deep learning (DL) has been adopted to predict the change of PPB binding affinity upon mutation, but there was a scarcity of studies predicting the PPB affinity itself. The major reason is the paucity of open-source dataset concerning PPB affinity. Therefore, the current study aimed to introduce and disclose a PPB affinity dataset (PPB-Affinity), which will definitely benefit the development of applicable DL to predict the PPB affinity. The PPB-Affinity dataset contains key information such as crystal structures of protein-protein complexes (with or without protein mutation patterns), PPB affinity, receptor protein chain, ligand protein chain, etc. To the best of our knowledge, this is the largest and publicly available PPB-Affinity dataset, which may finally help the industry in improving the screening efficiency of discovering new large-molecular drugs. We also developed a deep-learning benchmark model with this dataset to predict the PPB affinity, providing a foundational comparison for the research community.
 
@@ -69,4 +69,21 @@ Files of the download dataset are orginized as follows:
 ## How do we preprocess the source data-set to get PPB-Affinity？
 
 We provide a code how to preprocess the source dataset to obtain PPB-Affinity. Please visit https://github.com/Huatsing-Lau/PPB-Affinity-DataPrepWorkflow
+
+## Citations
+```bibtex
+@article{PPB-Affinity2024,
+   author = {Liu, Huaqing and Chen, Peiyi and Zhai, Xiaochen and Huo, Ku-Geng and Zhou, Shuxian and Han, Lanqing and Fan, Guoxin},
+   title = {PPB-Affinity: Protein-Protein Binding Affinity dataset for AI-based protein drug discovery},
+   journal = {Scientific Data},
+   volume = {11},
+   number = {1},
+   pages = {1316},
+   ISSN = {2052-4463},
+   DOI = {10.1038/s41597-024-03997-4},
+   url = {https://doi.org/10.1038/s41597-024-03997-4},
+   year = {2024},
+   type = {Journal Article}
+}
+````
 <!-- #endregion -->
