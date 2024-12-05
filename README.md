@@ -7,7 +7,7 @@ Prediction of protein-protein binding (PPB) affinity plays an important role in 
 
 ## Download Data
 
-You can download dataset from zenodo https://doi.org/10.5281/zenodo.13067409
+You can download dataset from zenodo https://zenodo.org/doi/10.5281/zenodo.11070823.
 
 ### Benchmark File Tree
 
