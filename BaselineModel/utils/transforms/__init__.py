@@ -7,4 +7,4 @@ from .noise import AddAtomNoise, AddChiAngleNoise
 from .corrupt_chi import CorruptChiAngle
 
 # Factory
-from ._base import get_transform, Compose
+from ._base import get_transform, Compose, _index_select_data

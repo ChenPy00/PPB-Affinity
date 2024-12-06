@@ -48,9 +48,6 @@ def parse_mmcif_assembly(path, model_id, assembly_id=0, unknown_threshold=1.0):
 
 
 def parse_biopython_structure(entity, unknown_threshold=1.0):
-    '''
-    获取一个entity(PDBParser get_structure读取一个pdb文件后得到)中RDE所需信息。
-    '''
     chains = Selection.unfold_entities(entity, 'C')
     chains.sort(key=lambda c: c.get_id())
     data = EasyDict({
@@ -159,9 +156,6 @@ def parse_biopython_structure(entity, unknown_threshold=1.0):
         return None, None
 
     seq_map = {}
-    # data.chain_id: 每个氨基酸所在链的ID
-    # data.resseq: 每个氨基酸在链中的序号
-    # data.icode: 每个氨基酸的icode，也可以是空格
     for i, (chain_id, resseq, icode) in enumerate(zip(data.chain_id, data.resseq, data.icode)):
         seq_map[(chain_id, resseq, icode)] = i
 

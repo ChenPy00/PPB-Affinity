@@ -95,25 +95,16 @@ class SelectedRegionFixedSizePatch(object):
 
     def __init__(self, select_attr, patch_size):
         super().__init__()
-        # 若选择突变位点为中心，则select_attr取值为'mut_flag'
         self.select_attr = select_attr
         self.patch_size = patch_size
     
     def __call__(self, data):
         select_flag = (data[self.select_attr] > 0)
 
-        # pos_CB = _get_CB_positions(data['pos_atoms'], data['mask_atoms'])   # (L, 3)
-        # pos_sel = pos_CB[select_flag]   # (S, 3)
-        # dist_from_sel = torch.cdist(pos_CB, pos_sel).min(dim=1)[0]    # (L, )
-
         pos_CA = data['pos_atoms'][:, 1, :]
         pos_sel = pos_CA[select_flag]
         dist_from_sel = torch.cdist(pos_CA, pos_sel).min(dim=1)[0]
 
-        # patch_idx = torch.argsort(dist_from_sel)[:self.patch_size]
-        # data_patch = _index_select_data(data, patch_idx)
-
-        # ligand跟receptor各取一半
         ligand_idx = torch.where(data['group_id'] == 1)[0]
         ligand_patch_idx = torch.argsort(dist_from_sel[ligand_idx])[:int(self.patch_size/2)]
         ligand_patch_idx = ligand_idx[ligand_patch_idx]

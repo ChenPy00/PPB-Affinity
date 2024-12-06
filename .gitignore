@@ -1,6 +1,7 @@
 benchmark_cache/*
 log_dir/*
 *.zip
+*.pt
 ./idea/
 .ipynb_checkpoints/ 
 __pycache__/ 

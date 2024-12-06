@@ -61,7 +61,7 @@ def load_data_entries(csv_path, blocklist={'1KBH'}):
             continue
         if type(r['mutstr']) == float:
             pass
-        elif  r['mutstr'][0]==',':
+        elif r['mutstr'][0]==',':
             continue
         try:
             entry = {
@@ -69,11 +69,11 @@ def load_data_entries(csv_path, blocklist={'1KBH'}):
                 'complex': r['pdb'],
                 'mutstr': 'None' if type(r['mutstr']) == float else r['mutstr'],
                 'num_muts': 0 if type(r['mutstr']) == float else len(r['mutstr']),
-                'pdbcode': f"{r['source']}_{r['pdb']}".upper(),  # r['pdb'].upper(),
+                'pdbcode': f"{r['source']}_{r['pdb']}".upper(),
                 'group_ligand': r['ligand'],
                 'group_receptor': r['receptor'],
-                'dimer': np.float32(len(r['ligand'])==5 and len(r['receptor'])==5),  # 20231214新增
-                'l2andr2': np.float32(len(r['ligand'])<=10 and len(r['receptor'])<=10),  # 20231221新增
+                'dimer': np.float32(len(r['ligand'])==5 and len(r['receptor'])==5),
+                'l2andr2': np.float32(len(r['ligand'])<=10 and len(r['receptor'])<=10),
                 'mutations': [None] if type(r['mutstr']) == float else list(map(_parse_mut, r['mutstr'].replace(' ','').split(','))),
                 'dG': np.float32(r['dG']),
                 'labels': r[['dG']].values.astype('float32'),
@@ -86,11 +86,11 @@ def load_data_entries(csv_path, blocklist={'1KBH'}):
                 'complex': r['pdb'],
                 'mutstr': 'None' if type(r['mutstr']) == float else r['mutstr'],
                 'num_muts': 0 if type(r['mutstr']) == float else len(r['mutstr']),
-                'pdbcode': f"{r['source']}_{r['pdb']}".upper(),  # r['pdb'].upper(),
+                'pdbcode': f"{r['source']}_{r['pdb']}".upper(),
                 'group_ligand': r['ligand'],
                 'group_receptor': r['receptor'],
-                'dimer': np.float32(len(r['ligand'])==5 and len(r['receptor'])==5),  # 20231214新增
-                'l2andr2': np.float32(len(r['ligand'])<=10 and len(r['receptor'])<=10),  # 20231221新增
+                'dimer': np.float32(len(r['ligand'])==5 and len(r['receptor'])==5),
+                'l2andr2': np.float32(len(r['ligand'])<=10 and len(r['receptor'])<=10),
                 'mutations': [None] if type(r['mutstr']) == float else list(map(_parse_mut, r['mutstr'].replace(' ','').split(','))),
                 'dG': np.float32(r['dG']),
                 'labels': r[['dG']].values.astype('float32'),
@@ -99,17 +99,14 @@ def load_data_entries(csv_path, blocklist={'1KBH'}):
             }
         entries.append(entry)
 
-    # 重新排序，相同complex的相连在一起
     entries = sorted(entries, key=lambda entry: entry['complex'])
-    # 重新命名id
+
     for i, entry in enumerate(entries):
         entry['id'] = i
 
     return entries
 
 
-# +
-# 使用ESM分别提取ligand/receptor的特征
 class MixedDataset(Dataset):
 
     def __init__(
@@ -154,8 +151,7 @@ class MixedDataset(Dataset):
             with open(self.entries_cache, 'rb') as f:
                 self.entries_full = pickle.load(f)
             self.entries_full = [e for e in self.entries_full if e['complex'] not in self.blocklist]
-        
-        # 严格划分数据
+
         if self.strict:
             complex_to_entries = {}
             for e in self.entries_full:
@@ -176,7 +172,6 @@ class MixedDataset(Dataset):
             val_split = complex_splits.pop(self.cvfold_index)
             train_split = sum(complex_splits, start=[])
 
-
             if self.split == 'val':
                 complexes_this = val_split
             else:
@@ -186,8 +181,7 @@ class MixedDataset(Dataset):
             for cplx in complexes_this:
                 entries += complex_to_entries[cplx]
             self.entries = entries
-        
-        # 不严格划分数据
+
         else:
             entries = self.entries_full
             random.Random(self.split_seed).shuffle(entries)
@@ -278,19 +272,13 @@ class MixedDataset(Dataset):
             data['mut_flag'] = torch.full_like(data['aa'], False, dtype=torch.bool)
 
         # labels_mask
-        # data['labels_mask'] = torch.logical_not(torch.isnan(torch.from_numpy(data['labels'])))
         data['labels_mask'] = ~np.isnan(data['labels'])
         data['labels'] = np.nan_to_num(data['labels'])
 
-        # 版本1：
-        # itf_flag, 结合界面
-        # ligand残基和receptor残基之间CB原子距离<8, 则认为是binding界面
-        # 根据rde/utils/protein/constants.py，CB原子是4
-        # 计算任意两个CB原子之间的距离
         idx_ligand = torch.where(data['group_id'] == 1)[0]
         idx_receptor = torch.where(data['group_id'] == 2)[0]
-        dist_pair = torch.cdist(data.pos_heavyatom[idx_ligand, 1, :], data.pos_heavyatom[idx_receptor, 1, :])  # 4号是CB原子
-        # 找出距离小于阈值的氨基酸残基
+        dist_pair = torch.cdist(data.pos_heavyatom[idx_ligand, 1, :], data.pos_heavyatom[idx_receptor, 1, :])  # 1 is C-alpha atom
+
         idx_ligand_itf, idx_receptor_itf = torch.where(dist_pair < 10.0)
         idx_ligand_itf = idx_ligand[torch.unique(idx_ligand_itf)]
         idx_receptor_itf = idx_receptor[torch.unique(idx_receptor_itf)]
@@ -309,19 +297,7 @@ class MixedDataset(Dataset):
                 pdb.set_trace()
         
         return data
-    
-#         if self.transform is not None:
-#             try:
-#                 data_tf = self.transform(data)
-#                 data = data_tf
-#                 data['block']=False
-#                 return data
-#             except IndexError:
-#                 print(data['pdbcode'])
-#                 print(data['itf_flag'].sum())
-#                 data['block']=True
-#                 return data
-# -
+
 
 if __name__=='__main__':
     import tqdm

@@ -61,7 +61,7 @@ class DG_Network(nn.Module):
             mask_residue=mask_residue,
         )
 
-        b = self.mut_bias(batch['mut_flag'].long())  # 此处batch['mut_flag']是每个残基是否突变的mask
+        b = self.mut_bias(batch['mut_flag'].long())
         x = x + b
         
         z = self.pair_encoder(
@@ -109,3 +109,11 @@ class DG_Network(nn.Module):
                 'dG_true': batch['dG']
             }
         return loss_dict, out_dict
+
+    def infer(self, batch):
+        batch = {k: v for k, v in batch.items()}
+        h = self.encode(batch)
+        H = h.max(dim=1)[0]
+
+        preds = self.predictor(H)
+        return preds[:, 0] if self.num_classes > 1 else preds.squeeze(dim=-1)
