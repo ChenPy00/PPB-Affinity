@@ -1,0 +1,1 @@
+You can download trained weight from [Hugging Face](https://huggingface.co/ChenPy00/PPB-Affinity).
