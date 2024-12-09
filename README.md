@@ -5,9 +5,11 @@
 
 Prediction of protein-protein binding (PPB) affinity plays an important role in large-molecular drug discovery. Deep learning (DL) has been adopted to predict the change of PPB binding affinity upon mutation, but there was a scarcity of studies predicting the PPB affinity itself. The major reason is the paucity of open-source dataset concerning PPB affinity. Therefore, the current study aimed to introduce and disclose a PPB affinity dataset (PPB-Affinity), which will definitely benefit the development of applicable DL to predict the PPB affinity. The PPB-Affinity dataset contains key information such as crystal structures of protein-protein complexes (with or without protein mutation patterns), PPB affinity, receptor protein chain, ligand protein chain, etc. To the best of our knowledge, this is the largest and publicly available PPB-Affinity dataset, which may finally help the industry in improving the screening efficiency of discovering new large-molecular drugs. We also developed a deep-learning benchmark model with this dataset to predict the PPB affinity, providing a foundational comparison for the research community.
 
-## Download Data
+## Download Data and Trained Weight
 
-You can download dataset from zenodo https://zenodo.org/doi/10.5281/zenodo.11070823.
+You can download dataset from [Zenodo](https://zenodo.org/doi/10.5281/zenodo.11070823).
+
+You can download trained weight from [Hugging Face](https://huggingface.co/ChenPy00/PPB-Affinity).
 
 ### Benchmark File Tree
 
@@ -65,6 +67,8 @@ Files of the download dataset are orginized as follows:
    	After running the script, a folder "log_dir" will be generated, there are the checkpoint, log file and predict file(K-fold)
 
 3. **Run draw.ipynb to draw scatter plots of cross validation.**
+    
+    You can use the `result.csv` file in the `checkpoints` folder we provided(please see *Download Data and Trained Weight* above) to draw the same picture as in the `CrossValidationFigs` folder
 
 4. **Infer from pdb**
 
