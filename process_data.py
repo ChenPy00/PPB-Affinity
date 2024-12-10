@@ -39,9 +39,15 @@ def create_pdb_path(inputs):
 
 
 def mutstr_transform(mutstr):
+    '''
+    input mutstr: B_K122A, B_Q121A, B_V126A
+    output mutstr should be: KB122A,QB121A,VB126A
+    '''
     if type(mutstr) == str:
-        mutstr = mutstr.replace('_', '')
-        mutstr = mutstr[1] + mutstr[0] + mutstr[2:]
+        # mutstr = mutstr.replace('_', '')
+        # mutstr = mutstr[1] + mutstr[0] + mutstr[2:]
+        mutstr=mutstr.replace('_', '').replace(" ",'')
+        mutstr = ','.join([m[1]+m[0]+m[2:] for m in mutstr.split(',')])
     else:
         pass
     return mutstr
