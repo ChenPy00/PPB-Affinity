@@ -32,10 +32,10 @@ Files of the download dataset are orginized as follows:
 
 0. **Prepare environment**
 
-   ```
-   conda env create -f environment.yaml -n PPB-Affinity
-   conda activate PPB-Affinity
-   ```
+    ```
+    conda env create -f environment.yaml -n PPB-Affinity
+    conda activate PPB-Affinity
+    ```
 
 1. **Process data**
 
@@ -55,7 +55,7 @@ Files of the download dataset are orginized as follows:
 
 2. **Train the baseline model**
 
-  	Perform five-fold cross-validation on the baseline model using the PPB-Affinity dataset, with data split based on PDB codes.
+	Perform five-fold cross-validation on the baseline model using the PPB-Affinity dataset, with data split based on PDB codes.
 
    ```
    python train.py \
@@ -64,15 +64,21 @@ Files of the download dataset are orginized as follows:
    	--device 'cuda'
    ```
 
-   	After running the script, a folder "log_dir" will be generated, there are the checkpoint, log file and predict file(K-fold)
-
+	After running the script, a folder 'log_dir' will be generated, which contains the checkpoint, log file and predict file (K-fold), and it will save the current data partitioning results as 'train_pdb.pkl' and 'val_pdb.pkl. 
+	Additionally, we have also uploaded the data partitioning results of our open-source checkpoint. For details, please refer to `train_datasplit` folder. The data partitioning results for cross-validation are stored in the `.pkl` file as a list. The method to read it is as follows:
+	```python
+	import pickle
+	with open('./train_datasplit/train_pdb.pkl', 'rb') as f:
+    	data = pickle.load(f)
+	```
+	
 3. **Run draw.ipynb to draw scatter plots of cross validation.**
-    
+   
     You can use the `result.csv` file in the `checkpoints` folder we provided(please see *Download Data and Trained Weight* above) to draw the same picture as in the `CrossValidationFigs` folder
 
 4. **Infer from pdb**
 
-   We have provided an example of inference, please refer to "inference.py" for details and you can complete a simple inference by entering the following command on the terminal:
+	We have provided an example of inference, please refer to "inference.py" for details and you can complete a simple inference by entering the following command on the terminal:
 
    ```
    python inference.py \
